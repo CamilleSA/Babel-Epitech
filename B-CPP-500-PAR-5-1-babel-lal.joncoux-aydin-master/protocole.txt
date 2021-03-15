@@ -1,0 +1,47 @@
+A - Authentification :
+
+1 - Client demande graphiquemet à l'utilisateur : PORT et HOST
+2 - Client demande graphiquement à l'utilisateur : USERNAME et PASSWORD
+3 - Client donne au Server :
+	a - LOGIN pseudo password
+	b - REGISTER pseudo password
+4 - Server
+	a - Server trouve une coincidence dans la database et renvoie : (id + contacts + historique d'appels)
+			200 id-user [id_user username status, id_user username status, ..] [id_user username call_status, id_user username call_status, ..]
+	b - IF login - Server ne trouve pas une coincidence dans la database et renvoie :
+			401
+	c - Server a un probleme interne :
+			500
+	d - Server ne trouve pas le password et le pseudo dans la requête :
+			403
+5 - Client se connecte et envoie au server :
+			200 IP status
+
+B - Appel :
+
+1 - Client A demande au Server :
+			INVITE id_user_A id_user_B
+2 - Server
+	a - Client B est en ligne et envoie au client B :
+			INVITE id_user_A id_user_B
+	b - Client B est hors ligne(ou en ligne avec qql'un d'autre) et envoie au client A :
+			486
+3 - Client B sonne graphiquement et envoie en boucle au Server :
+			180
+4 - Client B
+    a- Utilisateur B accepte l'appel et Client B envoie au server :
+			200 IP
+    b- Utilisateur B decline l'appel, Client B envoie au server :
+			603
+5 - Server renvoie la commande (Size:200 IP ou Size:603) au Client A
+
+
+C - Conversation Audio :
+
+-> UDP syntaxe : "size:timestamp:content"
+
+1 - Client A - PortAudio récupère le son
+2 - Client A - Opus le compresse
+3 - Client A envoie à Client B le son
+4 - Client B - Opus le décompresse
+5 - Client B - PortAudio display le son
